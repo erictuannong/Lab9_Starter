@@ -69,20 +69,20 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
+      <button onclick="consoleLog()">Console Log</button>
+      <button onclick="consoleError()">Console Error</button>
+      <button onclick="consoleCount()">Console Count</button>
+      <button onclick="consoleWarn()">Console Warn</button>
+      <button onclick="consoleAssert()">Console Assert</button>
+      <button onclick="consoleClear()">Console Clear</button>
+      <button onclick="consoleDir()">Console Dir</button>
+      <button onclick="consoledirxml()">Console dirxml</button>
+      <button onclick="consoleGroupStart()">Console Group Start</button>
+      <button onclick="consoleGroupEnd()">Console Group End</button>
+      <button onclick="consoleTable()">Console Table</button>
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="endTimer()">End Timer</button>
+      <button onclick="consoleTrace()">Console Trace</button>
       <button>Trigger a Global Error</button>
     </section>
   </main>
@@ -101,6 +101,60 @@
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
+    function consoleLog() {
+      console.log("Console Log Demo");
+    }
+    function consoleError() {
+      console.error("Console Error Demo");
+    }
+    function consoleCount() {
+      console.count("Counter Demo");
+    }
+    function consoleWarn() {
+      console.warn("Console Warn Demo");
+    }
+    function consoleAssert() {
+      let x = 4;
+      console.assert(x > 4, "Console Assert fails");
+    }
+    function consoleClear() {
+      console.clear();
+    }
+    function consoleDir() {
+      console.dir(document.body);
+    }
+    function consoledirxml() {
+      console.dirxml(document.body);
+    }
+    function consoleGroupStart() {
+      console.group("Grouped Logs");
+      console.log("Apart");
+      console.log("Of Me");
+    }
+    function consoleGroupEnd() {
+      console.groupEnd();
+    }
+    function consoleTable() {
+      const data = [
+        { name: "Erictuan", age:21 }
+      ];
+      console.table(data);
+    }
+    function startTimer() {
+      console.time("Demo Timer");
+    }
+    function endTimer() {
+      console.timeEnd("Demo Timer Ended");
+    }
+    function consoleTrace() {
+      function a() {
+        function b() {
+          console.trace();
+        }
+        b();
+      }
+      a();
+    }
     // You may move this JS to another file if you wish
   </script>
 </body>
