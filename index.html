@@ -158,10 +158,15 @@
     }
     function willerror() {
       try {
-        const missing = document.getElementById("doesn't_exist");
+        const missing = document.getElementById("WebDev");
         if (!missing) {
-          throw 
+          throw new Error("Element with ID 'WebDev' doesn't exist!");
         }
+        console.log("Element with ID 'WebDev' does exist!");
+      } catch(error) {
+        console.error("Caught an error:", error.message);
+      } finally {
+        console.log("Went through the try block or catch block");
       }
     }
     // You may move this JS to another file if you wish
