@@ -6,7 +6,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab 9</title>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "a14673ca277547eda85865f26999cfa9",
+      application: "erictuan_nong"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
   <style>
     button {
       margin: 3px;
@@ -84,7 +91,9 @@
       <button onclick="endTimer()">End Timer</button>
       <button onclick="consoleTrace()">Console Trace</button>
       <button onclick="willerror()">See Error</button>
-      <button>Trigger a Global Error</button>
+      <div id = "HereElement">I exist now lol</div>
+      <button onclick="customError()">See Custom Error</button>
+      <button onclick="triggerGlobalError()">Trigger a Global Error</button>
     </section>
   </main>
 
@@ -102,6 +111,15 @@
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log("Message:", message);
+      console.log("Source:", source);
+      console.log("Line:", lineno, "Column:", colno);
+      console.log("Error object:", error);
+      TrackJS.track("Don't call undefined functions");
+      return true;
+    };
+    
     function consoleLog() {
       console.log("Console Log Demo");
     }
@@ -156,18 +174,47 @@
       }
       a();
     }
+    class ElementError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "ElementError";
+      }
+    }
     function willerror() {
       try {
-        const missing = document.getElementById("WebDev");
+        const wrong = document.getElementById("WebDev");
         if (!missing) {
           throw new Error("Element with ID 'WebDev' doesn't exist!");
         }
         console.log("Element with ID 'WebDev' does exist!");
+      }catch(error) {
+          console.error("Caught an error:", error.message);
+          TrackJS.track("Developer tried getting an ID that doesn't exist");
+      }finally {
+        console.log("Went through the try block or catch block");
+      }
+    }
+    function customError() {
+      try {
+        const missing = document.getElementById("HereElemen");
+        if (!missing) {
+          throw new ElementError("The element is wrong");
+        }
+        console.log("Element with ID 'HereElement' does exist!");
       } catch(error) {
-        console.error("Caught an error:", error.message);
+        if (error instanceof ElementError) {
+          console.error("Caught an error from custom:", error.message);
+          TrackJS.track("Developer probably misspelled it");
+        }
+        else {
+          console.error("Unknown Error:", error);
+        }
       } finally {
         console.log("Went through the try block or catch block");
       }
+    }
+    function triggerGlobalError() {
+      helpme();
     }
     // You may move this JS to another file if you wish
   </script>
