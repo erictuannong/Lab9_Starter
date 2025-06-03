@@ -10,7 +10,7 @@
   <script>
     window.TrackJS && TrackJS.install({ 
       token: "a14673ca277547eda85865f26999cfa9",
-      application: "erictuan_nong"
+      application: "lab9starter"
       // for more configuration options, see https://docs.trackjs.com
     });
   </script>
@@ -90,23 +90,51 @@
       <button onclick="startTimer()">Start Timer</button>
       <button onclick="endTimer()">End Timer</button>
       <button onclick="consoleTrace()">Console Trace</button>
-      <button onclick="willerror()">See Error</button>
-      <div id = "HereElement">I exist now lol</div>
-      <button onclick="customError()">See Custom Error</button>
       <button onclick="triggerGlobalError()">Trigger a Global Error</button>
     </section>
   </main>
 
   <script>
+    class DivideByZeroError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "DivideByZeroError";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
       let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
+      let firstNum = parseFloat(document.querySelector('#first-num').value);
+      let secondNum = parseFloat(document.querySelector('#second-num').value);
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new Error("Invalid input: One or both inputs are not numbers");
+        }
+
+        if (operator === "/" && secondNum === 0) {
+          throw new DivideByZeroError("Cannot divide by zero!");
+        }
+
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+        output.innerHTML = result;
+      } catch (error) {
+        output.innerHTML = "Error!";
+        console.error(error.name + ": " + error.message);
+
+        if (error instanceof DivideByZeroError) {
+          TrackJS.track("Divide by zero attempted");
+        } else {
+          TrackJS.track("Calculation error occurred");
+        }
+      } finally {
+        console.log("Calculation attempted");
+      }
     });
+
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
@@ -173,45 +201,6 @@
         b();
       }
       a();
-    }
-    class ElementError extends Error {
-      constructor(message) {
-        super(message);
-        this.name = "ElementError";
-      }
-    }
-    function willerror() {
-      try {
-        const wrong = document.getElementById("WebDev");
-        if (!missing) {
-          throw new Error("Element with ID 'WebDev' doesn't exist!");
-        }
-        console.log("Element with ID 'WebDev' does exist!");
-      }catch(error) {
-          console.error("Caught an error:", error.message);
-          TrackJS.track("Developer tried getting an ID that doesn't exist");
-      }finally {
-        console.log("Went through the try block or catch block");
-      }
-    }
-    function customError() {
-      try {
-        const missing = document.getElementById("HereElemen");
-        if (!missing) {
-          throw new ElementError("The element is wrong");
-        }
-        console.log("Element with ID 'HereElement' does exist!");
-      } catch(error) {
-        if (error instanceof ElementError) {
-          console.error("Caught an error from custom:", error.message);
-          TrackJS.track("Developer probably misspelled it");
-        }
-        else {
-          console.error("Unknown Error:", error);
-        }
-      } finally {
-        console.log("Went through the try block or catch block");
-      }
     }
     function triggerGlobalError() {
       helpme();
